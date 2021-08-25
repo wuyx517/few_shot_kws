@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f34d10fd-8d54-4198-b051-8ee302378431" name="wuyx@110.86.16.170:8182 password (3)">
+        <fileTransfer rootFolder="/data/wuyx/kws/few_shot_kws" accessType="SFTP" host="110.86.16.170" port="8182" sshConfigId="828315da-6ef3-499d-99e1-dac9790c3a71" sshConfig="wuyx@110.86.16.170:8182 password" />
+      </webServer>
+    </option>
+  </component>
+</project>
