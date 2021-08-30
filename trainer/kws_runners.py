@@ -3,12 +3,17 @@ import tensorflow as tf
 
 
 class KwsTrainer:
-    def __init__(self, dataloader, model):
+    def __init__(self, dataloader, val_loader, model):
         self.dataloader = dataloader
+        self.val_loader = val_loader
         self.model = model
         self.loss_f = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
         self.optimizer = tf.keras.optimizers.Adam()
         self.checkpoint_dir = './model/kws_test/checkpoints/'
+        self.model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
+            filepath=self.checkpoint_dir,
+            mode="max",
+        )
         self.steps = 0
 
     def set_train_metrics(self):
@@ -17,7 +22,12 @@ class KwsTrainer:
         }
 
     def compile(self):
-        self.model._build([1, 600, 39, 1])
+        # self.model._build([1, 600, 39, 1])
+        self.model.compile(
+                optimizer=self.optimizer,
+                loss=self.loss_f,
+                metrics=["accuracy"],
+                )
         try:
             self.load_checkpoint()
         except:
@@ -43,20 +53,28 @@ class KwsTrainer:
         self.steps = int(files[-1].split('_')[-1].replace('.h5', ''))
 
     def _train_step(self):
-        for bach in self.dataloader:
-            features, label = bach
-            with tf.GradientTape() as tape:
-                y_pred = self.model(features)
-                loss = self.loss_f(label, y_pred)
-                # tape.watch(loss)
-            # print(self.model.trainable_variables)
-            gradients = tape.gradient(loss, self.model.trainable_variables)
-            self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
-            # self.train_metrics["loss"].update_state(loss)
-            print('steeps: ', self.steps, 'loss: ', loss)
-            self.steps += 1
+        self.model.fit(
+            self.dataloader,
+            validation_data=self.val_loader,
+            epochs=40,
+            callbacks=[self.model_checkpoint_callback]
+            # callbacks=[tf.keras.callbacks.EarlyStopping(verbose=1, patience=4),
+            #            tf.keras.callbacks.LearningRateScheduler(scheduler)],
+        )
 
+        # for bach in self.dataloader:
 
+            # features, label = bach
+            # with tf.GradientTape() as tape:
+            #     y_pred = self.model(features)
+            #     loss = self.loss_f(label, y_pred)
+            #     # tape.watch(loss)
+            # # print(self.model.trainable_variables)
+            # gradients = tape.gradient(loss, self.model.trainable_variables)
+            # self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
+            # # self.train_metrics["loss"].update_state(loss)
+            # print('steeps: ', self.steps, 'loss: ', loss)
+            # self.steps += 1
 
 
 

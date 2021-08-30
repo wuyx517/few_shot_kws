@@ -2,6 +2,7 @@ import os
 
 import numpy as np
 import tensorflow as tf
+import random
 
 from dataloader.data_wav_tools import read_wav_data, get_mfcc_feature
 
@@ -9,6 +10,7 @@ from dataloader.data_wav_tools import read_wav_data, get_mfcc_feature
 class DataLoader:
     def __init__(self, train_file_list, dev_file_list, commands):
         self.train_list = self.make_data_list(train_file_list)
+        random.shuffle(self.train_list)
         self.dev_list = self.make_data_list(dev_file_list)
         self.commands = np.array(self.make_data_list(commands))
 
@@ -19,6 +21,7 @@ class DataLoader:
         for file in file_list:
             with open(file, 'r') as f:
                 data = f.readlines()
+                data = [unit.strip() for unit in data]
             data_list.extend(data)
         return data_list
 
@@ -34,6 +37,7 @@ class DataLoader:
             label = data.split('/')[-2]
             label_list = (label == self.commands)
             label_id = tf.argmax(label_list)
+            # print(label_id)
             yield spec, label_id
 
 

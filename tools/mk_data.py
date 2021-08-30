@@ -6,16 +6,16 @@ def find_files(path, pattern):
     return glob(os.path.join(path, pattern), recursive=True)
 
 
-wav_path = '/data/wuyx/kws/kws_data'
-val_path = '/data/wuyx/kws/kws_data/validation_list.txt'
-test_path = '/data/wuyx/kws/kws_data/testing_list.txt'
+wav_path = '/home/wuyx/data/gsc'
+val_path = '/home/wuyx/data/gsc/validation_list.txt'
+test_path = '/home/wuyx/data/gsc/testing_list.txt'
 
 line_list = find_files(wav_path, pattern='**/*.wav')
 
 fw_train_path = open('./train_list.txt', 'w')
 fw_val_path = open('./val_list.txt', 'w')
 fw_test_path = open('./test_list.txt', 'w')
-
+ 
 with open(val_path, 'r') as f:
     val_list = f.readlines()
 
